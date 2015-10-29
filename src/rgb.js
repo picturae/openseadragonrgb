@@ -28,10 +28,10 @@
             viewer:                  null,
 
             // options
-            onImageHover:             null,
+            onCanvasHover:             null,
         }, options );
 
-        if (this.onImageHover) {
+        if (this.onCanvasHover) {
             this.tracker = new $.MouseTracker({
                 element:            this.viewer.canvas,
                 moveHandler:        $.delegate( this, onMouseMove ),
@@ -73,7 +73,7 @@
     });
 
     function onMouseMove(event) {
-        this.onImageHover(this.getValueAt(event.position));
+        this.onCanvasHover(this.getValueAt(event.position));
     }
 
     /**

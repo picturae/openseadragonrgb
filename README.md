@@ -11,7 +11,7 @@ Include `dist/openseadragonrgb.js` after OpenSeadragon in your html. Then after 
 ### Options
 
     viewer.selection({
-        onMouseMove: function(color) {},
+        onCanvasHover: function(color) {},
     });
 
 ### Get values
@@ -20,7 +20,7 @@ You can get the RGBA value at an arbitrary point using viewport coordinates like
 
     var color = rgbPlugin.getValueAt(x, y);
 
-Then `color` (wheter from `getValueAt()` or passed to the onMouseMove callback) will contain:
+Then `color` (wheter from `getValueAt()` or passed to the onCanvasHover callback) will contain:
 
     {
         r: Number, // value for Red channel
