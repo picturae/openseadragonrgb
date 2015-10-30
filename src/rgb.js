@@ -68,6 +68,7 @@
                     if (imagePoint.x >= 0 && imagePoint.y >= 0 && imagePoint.x <= size.x && imagePoint.y <= size.y) {
                         // point is inside an image
                         result.image = image;
+                        result.imageCoordinates = imagePoint;
                     }
                 }
             }
