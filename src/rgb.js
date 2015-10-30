@@ -53,15 +53,18 @@
             var viewer = this.viewer;
             var result = viewer.drawer.getRgbAt(point);
             if (result) {
-                // console.log(viewer.drawer.canvas.width);
-                // console.log(viewer.drawer.canvas.offsetWidth);
                 var image;
                 var imagePoint;
                 var size;
                 for (var i = 0; i < viewer.world.getItemCount(); i++) {
                     image = viewer.world.getItemAt(i);
                     size = image.getContentSize();
-                    imagePoint = image.viewerElementToImageCoordinates(point);
+                    if ($.TiledImage.prototype.viewerElementToImageCoordinates) {
+                        imagePoint = image.viewerElementToImageCoordinates(point);
+                    } else {
+                        // older version
+                        imagePoint = viewer.viewport.viewerElementToImageCoordinates(point);
+                    }
                     if (imagePoint.x >= 0 && imagePoint.y >= 0 && imagePoint.x <= size.x && imagePoint.y <= size.y) {
                         // point is inside an image
                         result.image = image;
