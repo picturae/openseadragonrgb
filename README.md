@@ -4,13 +4,15 @@ An OpenSeadragon plugin to allow reading the rgb values of image pixels.
 
 ## Usage
 
+This plugin requires the latest version of OpenSeadragon
+
 Include `dist/openseadragonrgb.js` after OpenSeadragon in your html. Then after you create a viewer:
 
     var rgbPlugin = viewer.rgb(options);
 
 ### Options
 
-    viewer.selection({
+    viewer.rgb({
         onCanvasHover: function(color) {},
     });
 
