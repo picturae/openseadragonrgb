@@ -2,6 +2,10 @@
 
 An OpenSeadragon plugin to allow reading the rgb values of image pixels.
 
+## Demo
+
+http://picturae.github.io/openseadragonselection/#openseadragonrgb
+
 ## Usage
 
 This plugin requires the latest version of OpenSeadragon
