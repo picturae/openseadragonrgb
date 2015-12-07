@@ -39,7 +39,7 @@
         }
     };
 
-    $.extend( $.RGB.prototype, $.ControlDock.prototype, /** @lends OpenSeadragon.RGB.prototype */{
+    $.extend( $.RGB.prototype, /** @lends OpenSeadragon.RGB.prototype */{
         /**
          * Get RGB values of cancas coordinates
          * @method
