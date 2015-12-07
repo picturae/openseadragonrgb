@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "An OpenSeadragon plugin to allow reading the rgb values of image pixels.",
   "main": "rgb.js",
-  "scripts": {
-    "test": "test"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/picturae/openseadragonrgb.git"
@@ -14,7 +12,7 @@
     "openseadragon",
     "rgb"
   ],
-  "author": "Petar Petrov <freonblood@gmail.com>",
+  "author": "Petar Petrov",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/picturae/openseadragonrgb/issues"
