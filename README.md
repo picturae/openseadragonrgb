@@ -16,9 +16,12 @@ Include `dist/openseadragonrgb.js` after OpenSeadragon in your html. Then after 
 
 ### Options
 
-    viewer.rgb({
-        onCanvasHover: function(color) {},
-    });
+    {
+        onCanvasHover: function(color) {<statements>},
+        [sampleSize: <integer>,]
+    }
+
+Default sampleSize is 1.
 
 ### Get values
 

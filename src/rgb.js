@@ -14,7 +14,6 @@
         return this.rgbInstance;
     };
 
-
     /**
     * @class RGB
     * @classdesc Allows access to RGB values of pixels
@@ -29,6 +28,7 @@
 
             // options
             onCanvasHover:             null,
+            sampleSize:              1,
         }, options );
 
         if (this.onCanvasHover) {
@@ -74,14 +74,79 @@
             }
             return result;
         },
+
+          getValueAround: function( canvasX, canvasY ) {
+              var center = arguments.length === 1 ? canvasX : new $.Point( canvasX, canvasY) ;
+              var viewer = this.viewer;
+
+              var images = [];
+              for (var i = 0; i < viewer.world.getItemCount(); i++) {
+                  images.push( viewer.world.getItemAt(i) );
+              }
+
+              var image;
+              for (var i = 0; i < images.length; i++) {
+                  image = images[i];
+                  if ( viewer.drawer.pointIsInImage( center, image ) ) {
+                      break;
+                  }
+              }
+
+              var eyeDrop = viewer.drawer.getEyeDrop( center, viewer.rgbInstance.sampleSize );
+              var colors = [];
+              for (var i = 0; i < eyeDrop.length; i++) {
+                  colors.push( viewer.drawer.getRgbAt( eyeDrop[i] ) );
+              }
+
+              var reds = [], greens = [], blues = [], alphas = [];
+              for (var i = 0; i < colors.length; i++) {
+                  reds.push( colors[i].r );
+                  greens.push( colors[i].g );
+                  blues.push( colors[i].b );
+                  alphas.push( colors[i].a );
+              }
+              var getMedian = function ( channelValues ) {
+                  channelValues.sort( function( a, b ) {return a - b; } );
+                  var median = channelValues[Math.floor( channelValues.length / 2 )];
+                  console.log( 'channelValues ' + JSON.stringify( channelValues ) +  ' median: ' + JSON.stringify( median ) );
+                  return median;
+              };
+              var color = {
+                  r: getMedian(reds),
+                  g: getMedian(greens),
+                  b: getMedian(blues),
+                  a: getMedian(alphas),
+              };
+
+              console.log( 'color ' + JSON.stringify( color ) );
+
+              if ( image ) {
+                  color.image = image;
+                  color.imageCoordinates = center;
+              }
+              return color;
+         },
     });
 
     function onMouseMove(event) {
-        this.onCanvasHover(this.getValueAt(event.position));
+        this.onCanvasHover(this.getValueAround(event.position));
     }
 
     /**
-     * Get RGB values of cancas coordinates
+     * Test existence of imagepoint
+     * @method
+     * @param {OpenSeadragon.Point} point the coordinate.
+     * @return {Boolean} true when point is inside image.
+     */
+    $.Drawer.prototype.pointIsInImage = function( point, image ) {
+        var size = image.getContentSize();
+        var pointIsInImage = point.x >= 0 && point.y >= 0;
+        pointIsInImage = pointIsInImage && point.x <= size.x && point.y <= size.y;
+        return pointIsInImage;
+    };
+
+    /**
+     * Get RGB values of canvas coordinates
      * @method
      * @param {OpenSeadragon.Point} point the point in image coordinate system.
      * @return {Object|false} An object containing r,g,b properties or false if this is not supported.
@@ -99,6 +164,26 @@
             b: color[2],
             a: color[3]
         };
+    };
+
+    /**
+     * Get Points within a range
+     * @method
+     * @param {OpenSeadragon.Point} center the point mousepointed at.
+     * @return {Array} All the points within the eyedrop.
+     */
+    $.Drawer.prototype.getEyeDrop = function( center, sampleSize ) {
+        var points = [];
+        var plusmin = ( sampleSize - 1 ) / 2;
+        for (var x = 0 - plusmin; x <= plusmin; x++) {
+            for (var y = 0 - plusmin; y <= plusmin; y++) {
+                var point = new $.Point( center.x + x, center.y + y );
+                if ( center.distanceTo( point ) <= plusmin ) {
+                    points.push( point );
+                }
+            }
+        }
+        return points;
     };
 
 })(OpenSeadragon);

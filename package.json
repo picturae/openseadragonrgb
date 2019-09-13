@@ -1,6 +1,6 @@
 {
   "name": "openseadragonrgb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An OpenSeadragon plugin to allow reading the rgb values of image pixels.",
   "main": "dist/openseadragonrgb.js",
   "scripts": {},
