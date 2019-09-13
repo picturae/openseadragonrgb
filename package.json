@@ -2,7 +2,7 @@
   "name": "openseadragonrgb",
   "version": "1.0.0",
   "description": "An OpenSeadragon plugin to allow reading the rgb values of image pixels.",
-  "main": "rgb.js",
+  "main": "dist/openseadragonrgb.js",
   "scripts": {},
   "repository": {
     "type": "git",
@@ -18,8 +18,7 @@
     "url": "https://github.com/picturae/openseadragonrgb/issues"
   },
   "homepage": "https://github.com/picturae/openseadragonrgb#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
