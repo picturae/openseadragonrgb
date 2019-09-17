@@ -49,141 +49,92 @@
          * @return {Object|false} An object containing r,g,b properties or false if this is not supported.
          */
         getValueAt: function( canvasX, canvasY ) {
-            var point = arguments.length === 1 ? canvasX : new $.Point(canvasX, canvasY);
+            var center = arguments.length === 1 ? canvasX : new $.Point( canvasX, canvasY) ;
             var viewer = this.viewer;
-            var result = viewer.drawer.getRgbAt(point);
-            if (result) {
-                var image;
-                var imagePoint;
-                var size;
-                for (var i = 0; i < viewer.world.getItemCount(); i++) {
-                    image = viewer.world.getItemAt(i);
-                    size = image.getContentSize();
-                    if ($.TiledImage.prototype.viewerElementToImageCoordinates) {
-                        imagePoint = image.viewerElementToImageCoordinates(point);
-                    } else {
-                        // older version
-                        imagePoint = viewer.viewport.viewerElementToImageCoordinates(point);
-                    }
-                    if (imagePoint.x >= 0 && imagePoint.y >= 0 && imagePoint.x <= size.x && imagePoint.y <= size.y) {
-                        // point is inside an image
-                        result.image = image;
-                        result.imageCoordinates = imagePoint;
-                    }
-                }
+
+            var images = [];
+            for (var i = 0; i < viewer.world.getItemCount(); i++) {
+                images.push( viewer.world.getItemAt(i) );
             }
-            return result;
-        },
 
-          getValueAround: function( canvasX, canvasY ) {
-              var center = arguments.length === 1 ? canvasX : new $.Point( canvasX, canvasY) ;
-              var viewer = this.viewer;
+            var image = viewer.drawer.getImageOfPoint( center, images );
 
-              var images = [];
-              for (var i = 0; i < viewer.world.getItemCount(); i++) {
-                  images.push( viewer.world.getItemAt(i) );
-              }
-
-              var image;
-              for (var i = 0; i < images.length; i++) {
-                  image = images[i];
-                  if ( viewer.drawer.pointIsInImage( center, image ) ) {
-                      break;
-                  }
-              }
-
-              var eyeDrop = viewer.drawer.getEyeDrop( center, viewer.rgbInstance.sampleSize );
-              var colors = [];
-              for (var i = 0; i < eyeDrop.length; i++) {
-                  colors.push( viewer.drawer.getRgbAt( eyeDrop[i] ) );
-              }
-
-              var reds = [], greens = [], blues = [], alphas = [];
-              for (var i = 0; i < colors.length; i++) {
-                  reds.push( colors[i].r );
-                  greens.push( colors[i].g );
-                  blues.push( colors[i].b );
-                  alphas.push( colors[i].a );
-              }
-              var getMedian = function ( channelValues ) {
-                  channelValues.sort( function( a, b ) {return a - b; } );
-                  var median = channelValues[Math.floor( channelValues.length / 2 )];
-                  console.log( 'channelValues ' + JSON.stringify( channelValues ) +  ' median: ' + JSON.stringify( median ) );
-                  return median;
-              };
-              var color = {
-                  r: getMedian(reds),
-                  g: getMedian(greens),
-                  b: getMedian(blues),
-                  a: getMedian(alphas),
-              };
-
-              console.log( 'color ' + JSON.stringify( color ) );
-
-              if ( image ) {
-                  color.image = image;
-                  color.imageCoordinates = center;
-              }
-              return color;
-         },
+            var sampleData = viewer.drawer.getRgbAt( center );
+            var reds = [], greens = [], blues = [], alphas = [];
+            for (var s = 0; s < sampleData.length; s = s + 4) {
+                reds.push( sampleData[s] );
+                greens.push( sampleData[s + 1] );
+                blues.push( sampleData[s + 2] );
+                alphas.push( sampleData[s + 3] );
+            }
+            var getMedian = function ( channelValues ) {
+                channelValues.sort( function( a, b ) {return a - b; } );
+                var median = channelValues[Math.floor( channelValues.length / 2 )];
+                return median;
+            };
+            var color = {
+                r: getMedian(reds),
+                g: getMedian(greens),
+                b: getMedian(blues),
+                a: getMedian(alphas),
+            };
+            if ( image ) {
+                color.image = image;
+                color.imageCoordinates = center;
+            }
+            return color;
+       },
     });
 
     function onMouseMove(event) {
-        this.onCanvasHover(this.getValueAround(event.position));
+        this.onCanvasHover(this.getValueAt(event.position));
     }
 
     /**
      * Test existence of imagepoint
      * @method
      * @param {OpenSeadragon.Point} point the coordinate.
-     * @return {Boolean} true when point is inside image.
+     * @return {Image|null} the image that holds the point.
      */
-    $.Drawer.prototype.pointIsInImage = function( point, image ) {
-        var size = image.getContentSize();
-        var pointIsInImage = point.x >= 0 && point.y >= 0;
-        pointIsInImage = pointIsInImage && point.x <= size.x && point.y <= size.y;
-        return pointIsInImage;
+    $.Drawer.prototype.getImageOfPoint = function( point, images ) {
+        var image;
+        for (var i = 0; i < images.length; i++) {
+            var size = images[i].getContentSize();
+            var imagePoint;
+            if ($.TiledImage.prototype.viewerElementToImageCoordinates) {
+                imagePoint = images[i].viewerElementToImageCoordinates(point);
+            } else {
+                // older version
+                imagePoint = this.viewer.viewport.viewerElementToImageCoordinates(point);
+            }
+            var pointIsInImage = imagePoint.x >= 0 && imagePoint.y >= 0;
+            pointIsInImage = pointIsInImage && imagePoint.x <= size.x && imagePoint.y <= size.y;
+            if ( pointIsInImage ) {
+                image = images[i];
+                break;
+            }
+        }
+        return image;
     };
 
     /**
      * Get RGB values of canvas coordinates
      * @method
-     * @param {OpenSeadragon.Point} point the point in image coordinate system.
-     * @return {Object|false} An object containing r,g,b properties or false if this is not supported.
+     * @param {OpenSeadragon.Point} point the point in imageå coordinate system.
+     * @return {imageData|false} An object containing flat r,g,b,a array plus properties or false if this is not supported.
      */
     $.Drawer.prototype.getRgbAt = function(point) {
         if (!this.useCanvas) {
             return false;
         }
+        var sampleSize = this.viewer.rgbInstance.sampleSize;
+        var sampleOffset = ( sampleSize - 1 ) / 2;
         var ratio = $.pixelDensityRatio;
-        var color = this._getContext()
-                        .getImageData(point.x * ratio, point.y * ratio, 1, 1).data; // rgba e [0,255]
-        return {
-            r: color[0],
-            g: color[1],
-            b: color[2],
-            a: color[3]
-        };
-    };
-
-    /**
-     * Get Points within a range
-     * @method
-     * @param {OpenSeadragon.Point} center the point mousepointed at.
-     * @return {Array} All the points within the eyedrop.
-     */
-    $.Drawer.prototype.getEyeDrop = function( center, sampleSize ) {
-        var points = [];
-        var plusmin = ( sampleSize - 1 ) / 2;
-        for (var x = 0 - plusmin; x <= plusmin; x++) {
-            for (var y = 0 - plusmin; y <= plusmin; y++) {
-                var point = new $.Point( center.x + x, center.y + y );
-                if ( center.distanceTo( point ) <= plusmin ) {
-                    points.push( point );
-                }
-            }
-        }
-        return points;
+        var x = ( point.x * ratio ) - sampleOffset;
+        var y = ( point.y * ratio ) - sampleOffset;
+        var renderingContext = this._getContext();
+        var sampleData = renderingContext.getImageData(x, y, sampleSize, sampleSize).data; // rgba e [0,255]
+        return sampleData;
     };
 
 })(OpenSeadragon);
