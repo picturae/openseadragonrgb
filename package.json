@@ -1,9 +1,12 @@
 {
   "name": "openseadragonrgb",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "An OpenSeadragon plugin to allow reading the rgb values of image pixels.",
   "main": "dist/openseadragonrgb.js",
-  "scripts": {},
+  "scripts": {
+    "build": "eslint src/rgb.js && terser src/rgb.js --source-map --output dist/openseadragonrgb.js",
+    "watch": "onchange --initial \"src/*.js\" -- npm run build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/picturae/openseadragonrgb.git"
@@ -18,17 +21,13 @@
     "url": "https://github.com/picturae/openseadragonrgb/issues"
   },
   "homepage": "https://github.com/picturae/openseadragonrgb#readme",
+  "peerDependencies": {
+    "OpenSeadragon": "^2.0.0+"
+  },
   "dependencies": {},
   "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-jshint": "^1.11.2",
-    "gulp-load-plugins": "^0.10.0",
-    "gulp-plumber": "^1.0.1",
-    "gulp-serve": "^1.2.0",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^1.4.2",
-    "gulp-util": "^3.0.6",
-    "jshint-stylish": "^2.0.1"
+    "eslint": "^6.5.1",
+    "onchange": "^6.1.0",
+    "terser": "^4.3.4"
   }
 }
