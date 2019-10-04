@@ -46,3 +46,7 @@ If your tiles come from a different domain, you may get this error in the consol
     Uncaught SecurityError: Failed to execute 'getImageData' on 'CanvasRenderingContext2D': The canvas has been tainted by cross-origin data.
 
 The only way to fix this is to make the tile server return the `Access-Control-Allow-Origin: *` header and pass the `crossOriginPolicy: 'Anonymous'` option to OpenSeadragon. For more info on this go to https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Access-Control-Allow-Origin
+
+## Development
+
+Use npn run watch when developing. It causes ESLint to check your code for errors. When the code is ok the plugin is build.
