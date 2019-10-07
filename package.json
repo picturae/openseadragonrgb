@@ -4,8 +4,10 @@
   "description": "An OpenSeadragon plugin to allow reading the rgb values of image pixels.",
   "main": "dist/openseadragonrgb.js",
   "scripts": {
-    "build": "eslint src/rgb.js && terser src/rgb.js --source-map --output dist/openseadragonrgb.js",
-    "watch": "onchange --initial \"src/*.js\" -- npm run build"
+    "prebuild": "eslint src/rgb.js",
+    "build": "terser src/rgb.js --source-map --output dist/openseadragonrgb.js",
+    "postbuild": "echo - - - - build $npm_package_name",
+    "watch": "onchange --initial \"src/*.js\" -- npm run build --silent"
   },
   "repository": {
     "type": "git",
