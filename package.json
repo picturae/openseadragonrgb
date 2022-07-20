@@ -30,6 +30,6 @@
   "devDependencies": {
     "eslint": "^6.5.1",
     "onchange": "^6.1.0",
-    "terser": "^4.3.4"
+    "terser": "^4.8.1"
   }
 }
